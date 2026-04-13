@@ -1413,7 +1413,7 @@ document.getElementById('btnExport').addEventListener('click',()=>{
   if(!date||!dept||!batch){showToast('Missing','Fill Exam Date, Department & Session','error');return;}
   if(!allocationData.length){showToast('No Data','Generate seating plan first','error');return;}
   const wb=XLSX.utils.book_new();
-  const master=[['Date','Department','Session','Hall','Roll No','Name','Seat No','Subject Code','Subject','Year','Section']];
+  const master=[['Date','Department','Batch','Hall','Roll No','Name','Seat No','Subject Code','Subject','Year','Section']];
   allocationData.forEach(hall=>{hall.seats.filter(s=>s.student).forEach(sd=>{master.push([date,dept,batch,hall.hallName,sd.student.RollNo,sd.student.Name,sd.SeatingNo,sd.student.SubjectCode,sd.student.Subject,sd.student.Year,sd.student.Section]);});});
   const ws=XLSX.utils.aoa_to_sheet(master);
   ws['!cols']=master[0].map((_,ci)=>({wch:Math.min(Math.max(...master.map(r=>(r[ci]||'').toString().length))+2,30)}));
