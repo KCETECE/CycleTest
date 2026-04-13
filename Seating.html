@@ -1413,19 +1413,19 @@ document.getElementById('btnExport').addEventListener('click',()=>{
   if(!date||!dept||!batch){showToast('Missing','Fill Exam Date, Department & Session','error');return;}
   if(!allocationData.length){showToast('No Data','Generate seating plan first','error');return;}
   const wb=XLSX.utils.book_new();
-  const master=[['Date','Department','Session','Hall','Roll No','Name','Seat No','Year','Section','Subject Code','Subject','Extra Seat']];
-  allocationData.forEach(hall=>{hall.seats.filter(s=>s.student).forEach(sd=>{master.push([date,dept,batch,hall.hallName,sd.student.RollNo,sd.student.Name,sd.SeatingNo,sd.student.Year,sd.student.Section,sd.student.SubjectCode,sd.student.Subject,sd.isExtra?'Yes':'']);});});
+  const master=[['Date','Department','Session','Hall','Roll No','Name','Seat No','Subject Code','Subject','Year','Section']];
+  allocationData.forEach(hall=>{hall.seats.filter(s=>s.student).forEach(sd=>{master.push([date,dept,batch,hall.hallName,sd.student.RollNo,sd.student.Name,sd.SeatingNo,sd.student.SubjectCode,sd.student.Subject,sd.student.Year,sd.student.Section]);});});
   const ws=XLSX.utils.aoa_to_sheet(master);
   ws['!cols']=master[0].map((_,ci)=>({wch:Math.min(Math.max(...master.map(r=>(r[ci]||'').toString().length))+2,30)}));
   XLSX.utils.book_append_sheet(wb,ws,'Master_Plan');
   allocationData.forEach(hall=>{
-    const hd=[['Seat No','Roll No','Name','Year','Section','Subject Code','Subject','Extra']];
-    hall.seats.filter(s=>s.student).sort((a,b)=>a.SeatingNo.localeCompare(b.SeatingNo)).forEach(sd=>{hd.push([sd.SeatingNo,sd.student.RollNo,sd.student.Name,sd.student.Year,sd.student.Section,sd.student.SubjectCode,sd.student.Subject,sd.isExtra?'Yes':'']);});
+    const hd=[['Seat No','Roll No','Name','Subject Code','Subject','Year','Section']];
+    hall.seats.filter(s=>s.student).sort((a,b)=>a.SeatingNo.localeCompare(b.SeatingNo)).forEach(sd=>{hd.push([sd.SeatingNo,sd.student.RollNo,sd.student.Name,sd.student.SubjectCode,sd.student.Subject,sd.student.Year,sd.student.Section]);});
     XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(hd),hall.hallName.substring(0,30));
   });
   if(unassignedStudents.length>0){
-    const ud=[['Roll No','Name','Year','Section','Subject Code','Subject']];
-    unassignedStudents.forEach(s=>ud.push([s.RollNo,s.Name,s.Year,s.Section,s.SubjectCode,s.Subject]));
+    const ud=[['Roll No','Name','Subject Code','Subject','Year','Section']];
+    unassignedStudents.forEach(s=>ud.push([s.RollNo,s.Name,s.SubjectCode,s.Subject,s.Year,s.Section]));
     XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(ud),'Unassigned');
   }
   XLSX.writeFile(wb,`${dept}_${batch}_${date}_SeatingPlan.xlsx`);
